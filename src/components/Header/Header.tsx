@@ -1,5 +1,3 @@
-import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { FaUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { LinkContainer } from "react-router-bootstrap";
 import logo from "../../assets/logo.png";
@@ -15,20 +13,13 @@ import {
   useMediaQuery,
   useTheme,
   Badge,
-  Drawer,
-  Button,
-  Container,
-  Modal,
-  TextField,
-  InputAdornment
 } from "@mui/material";
 import { HiOutlineUserCircle } from "react-icons/hi2";
 import { IoCartOutline } from "react-icons/io5";
 import { useState } from "react";
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import  bg from '../../assets/bg.svg'
-import { IoMdCloseCircle } from "react-icons/io";
-import { Widgets } from "@mui/icons-material";
+import LoginDrawer from "../LoginDrawer/LoginDrawer";
+import LoginModal from "../LoginModal/LoginModal";
+
 // Define the types for the Redux state
 interface RootState {
   cart: {
@@ -44,10 +35,9 @@ interface RootState {
 
 const Header: React.FC = () => {
   const [loginDrawer,setLoginDrawer] = useState( false);
-  const [loginModal,setLoginModal] = useState(false)
   const { cartItems } = useSelector((state: RootState) => state.cart);
   const { userInfo } = useSelector((state: RootState) => state.auth);
-  const [phoneInput,setPhoneInput] = useState(false);
+  const [loginModal,setLoginModal] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -60,36 +50,18 @@ const Header: React.FC = () => {
     } catch (err) {
       console.log(err);
     }
-  };
+  }; 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
-  const isMobile = useMediaQuery("(max-width:600px)");
   const toggleDrawer = (open:boolean) => {
 
     setLoginDrawer(open);
   };
-  const handleOpenLoginModal = () => setLoginModal(true);
-  const handleCloseLoginModal = () => setLoginModal(false);
-
-    const style={
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: isMobile ? "100%" : "600px",
-      minHeight: isMobile?"100vh": "40vh",
-      padding: "2rem",
-      color: "white",
-      boxShadow: 24,
-      borderRadius: isMobile ? 0 : "25px",
-      backgroundImage: `url(${bg})`, // Background image
-      backgroundSize: 'cover', 
-      bgcolor: 'background.paper',
-      overflow: "hidden",
-      
-    }
-
+  
+  const openModal=(open:boolean)=>{
+    setLoginModal(open)
+  }
   return (
     <header>
       <AppBar
@@ -117,9 +89,8 @@ const Header: React.FC = () => {
     }}
   >
     {!userInfo ? (
-      <LinkContainer to="/login">
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={()=>openModal(true)}>
             <HiOutlineUserCircle style={{ color: "black", fontSize: "2rem" }} />
           </IconButton>
           <Typography
@@ -131,7 +102,6 @@ const Header: React.FC = () => {
             Log In
           </Typography>
         </Box>
-      </LinkContainer>
     ) : (
       <LinkContainer to="/profile">
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -197,9 +167,9 @@ const Header: React.FC = () => {
             {isDesktop &&  (
               <Box>
                 {!userInfo ?(
-                   <LinkContainer to="/login">
+     
                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                     <IconButton color="inherit">
+                     <IconButton color="inherit" onClick={()=>openModal(true)}>
                        <HiOutlineUserCircle style={{ color: "black", fontSize: "2rem" }} />
                      </IconButton>
                      <Typography
@@ -211,7 +181,6 @@ const Header: React.FC = () => {
                        Log In
                      </Typography>
                    </Box>
-                 </LinkContainer>
                 ):(
                     
               <LinkContainer to="/profile">
@@ -323,166 +292,20 @@ const Header: React.FC = () => {
             </LinkContainer>
             )}
             <Box>
-
             </Box>
           </Box>
-
 
         </Toolbar>
       </AppBar>
 
        {/* Drawer for Login */}
-       <Drawer
-        anchor="right"
-        open={loginDrawer}
-        onClose={() => toggleDrawer(false)}
-      >
-        <Box
-          sx={{
-            width: {xs:'400px'},
-          }}
-        >
-           <AppBar position="static" sx={{backgroundColor:'white'}} elevation={1}>
-        <Toolbar variant="dense" >
-          <IconButton edge="start" onClick={() => toggleDrawer(false)}>
-            <NavigateBeforeIcon sx={{color:'black'}}/>
-          </IconButton>
-          <Typography variant="h6" sx={{color:'black',fontFamily:"Montserrat",fontSize:"1.1rem"}} >
-            Cart
-          </Typography>
-        </Toolbar>
-      </AppBar>
-          <Box sx={{backgroundColor:'#F0F4F9',padding:'2px',paddingTop:{sm:40,xs:20,md:20},  height: { lg: '94vh', sm: '96vh', xs: '81.5vh' },overflow:'hidden'}}>
-            <Box sx={{ backgroundColor: 'white',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'column',
-      padding: '1rem',
-      width: { xs: '100%', sm: '70%', md: '100%' }, // Make the inner box responsive
-      maxHeight: '80vh', // Prevent it from growing too large
-      overflowY: 'auto', // Add vertical scroll only if content exceeds height
-      borderRadius: '8px',}}>
-              <Typography variant="h6" sx={{fontFamily:"Inter",fontWeight:'700'}}> 
-                    Please Login
-              </Typography>
-              <Typography variant="h6" sx={{fontFamily:"Inter",fontSize:'0.8rem',fontWeight:'600',marginBottom:'1rem',padding:'0.7rem'}}>
-                    Please login to access the cart.
-              </Typography>
-              <Button variant="contained" sx={{backgroundColor:"#EF4372",padding:'0.7rem',fontFamily:"Inter",borderRadius:2}} disableElevation fullWidth onClick={handleOpenLoginModal}>Login</Button>
-            </Box>
-          </Box>
-        </Box>
-      </Drawer>
-      <Modal open={loginModal} onClose={handleCloseLoginModal} aria-labelledby="mobile-modal" aria-describedby="responsive-modal">
-      <Box sx={style}>
-        {isMobile?(
-        <Box sx={{position:'relative',mt:2,left:'93%'}}>
-        <IconButton onClick={handleCloseLoginModal}>
-          <IoMdCloseCircle  style={{color:"#9d67aa",fontSize:'1.2rem',marginLeft:10}} />
-        </IconButton>
-        </Box>
+       <LoginDrawer
+        openDrawer={loginDrawer}
+        closeLoginDrawer={() => toggleDrawer(false)}/>
 
-        ):""}
-        <Typography
-          sx={{
-            fontFamily: "Lato",
-            fontWeight: "700",
-            backgroundImage:"linear-gradient(180deg, #ff3269 9%, #ff794d 98.18%)",
-            color: 'transparent',
-          backgroundClip: 'text',
-            fontSize:{lg: "3rem",xs:"2.5rem"},
-            mb: 2,
+        {/* Login modal on click of login */}
 
-          }}
-        >
-          barne farms
-        </Typography>
-
-        {/* Heading */}
-        <Typography
-          sx={{
-            fontFamily: "Montserrat",
-            fontWeight: "700",
-            fontSize: "1.8rem",
-            mb: 3,
-            width:{xs:"90px",sm:"320px",},
-            letterSpacing:'1.5px'
-          }}
-        >
-          Groceries delivered in  10 minutes
-        </Typography>
-
-       <Box sx={{display:'flex',
-            justifyContent:"center",
-            alignItems:'center',flexDirection:'column'}}>
-
-        <TextField
-          placeholder="Enter Phone Number"
-          variant="outlined"
-          fullWidth
-          
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start" sx={{ color: "black", fontWeight: "bold" }}>
-                +91
-              </InputAdornment>
-            ),
-            sx: {
-              borderRadius: "50px",
-              backgroundColor: "white",
-              height: "45px",
-              border: "none",
-            },
-          }}
-          inputProps={{
-            maxLength: 10,
-          }}
-          sx={{
-            "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-            mb: 3,
-            width:{lg:"75%",xs:"100%",sm:"80%"}
-          }}
-          onChange={()=>setPhoneInput(true)}
-        />
-        <Button
-          fullWidth
-          disabled={phoneInput}
-   
-          sx={{
-            backgroundImage:"linear-gradient(92.16deg, #ff3269 1.82%, #ff794d 98.18%)",
-            color: "white",
-            borderRadius: "50px",
-            height: "50px",
-            textTransform: "none",
-            "&:disabled": { backgroundColor: "black" },
-            fontFamily:"Montserrat",
-            width:{lg:"75%",xs:"100%",sm:"80%"}
-          }}
-        >
-          Continue
-        </Button>
-        <Typography
-          sx={{
-            
-            textAlign: "center",
-            fontSize: "0.8rem",
-            mt: 3,
-            width:"230px",
-            fontFamily:"Inter"
-          }}
-        >
-          By continuing, you agree to our{" "}
-          <span style={{ color: "#FF5C5C", fontWeight: "bold" }}>Terms of Service</span> &{" "}
-          <span style={{ color: "#FF5C5C", fontWeight: "bold" }}>Privacy Policy</span>
-        </Typography>
-       </Box>
-
-        {/* Continue Button */}
-
-        {/* Terms and Policy */}
-      </Box>
-    </Modal>
+        <LoginModal openModal={loginModal} closeModal={ ()=>openModal(false)}/>
     </header>
   );
 };

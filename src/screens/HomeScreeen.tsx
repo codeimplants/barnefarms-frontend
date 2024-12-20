@@ -4,10 +4,10 @@ import Product from "../components/Product/Product";
 import Loader from "../components/Loader/Loader";
 import Message from "../components/Message/Message";
 import { useGetProductsQuery } from "../slices/productsApiSlice";
-import { Box, Tabs, Tab, Typography } from "@mui/material";
+import { Box, Tabs, Tab, Typography,  } from "@mui/material";
 import { useSelector } from "react-redux";
-
-// Update the type for _id to string (since MongoDB _id is typically a string)
+import Grid from '@mui/material/Grid2'
+// Update the type for _id to  (since MongoDB _id is typically a string)
 export interface ProductType {
   _id: string; // Changed to string, assuming MongoDB's default ObjectId format
   name: string;
@@ -41,7 +41,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <Box sx={{ my: { xs: 8, sm: 10, md: 10 } }}>
+    <Box sx={{ my: { xs: 8, sm: 10, md: 10 }, }}>
       {isLoading ? (
         <Loader />
       ) : error ? (
@@ -54,7 +54,7 @@ const HomeScreen = () => {
         )
       ) : (
         <>
-        <Box sx={{display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <Box sx={{display:'flex',alignItems:'center',justifyContent:'center',}}>
           <Tabs
             value={selectedCategory}
             onChange={handleTabChange}
@@ -118,8 +118,6 @@ const HomeScreen = () => {
               }
               value="Vegetables"
             />
-
-
             <Tab
               label={
                 <Box
@@ -147,20 +145,16 @@ const HomeScreen = () => {
 
         </Box>
         
-          <Row>
+        <Box >
+      <Grid container spacing={{ xs:2, md:1,sm:4,lg:2 }}>
+          
             {filteredProducts.map((product: ProductType) => (
-              <Col
-                key={product._id}
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-                className="mb-4"
-              >
+              <Grid size={{xs:6,md:3,sm:4,lg:2}} key={product._id}>
                 <Product product={product}/>
-              </Col>
+              </Grid>
             ))}
-          </Row>
+        </Grid>
+         </Box>
         </>
       )}
     </Box>

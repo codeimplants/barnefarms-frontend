@@ -1,9 +1,10 @@
 
 import { createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
-import { BASE_URL } from "../constants";
+import { BACKEND_URL } from "../constants"; // localhost backend link
+// import { BASE_URL } from "../constants"; //hosted backend  link on render
 
 const baseQuery = fetchBaseQuery({
-  baseUrl:BASE_URL,
+  baseUrl:BACKEND_URL,
   prepareHeaders: (headers) => {  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
     const token: string | null = userInfo ? userInfo.token : null;
     console.log(token)
